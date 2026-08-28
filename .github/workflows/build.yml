@@ -1,0 +1,40 @@
+name: Build Custom ROM
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-22.04
+
+    steps:
+    - name: Maximize Build Space
+      uses: easimon/maximize-build-space@master
+      with:
+        root-reserve-mb: 512
+        swap-size-mb: 1024
+        remove-dotnet: 'true'
+        remove-android: 'true'
+        remove-haskell: 'true'
+        remove-codeql: 'true'
+        remove-docker-images: 'true'
+
+    - name: Checkout Repository
+      uses: actions/checkout@v3
+
+    - name: Install Dependencies
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y git repo wget curl rsync cpio
+
+    - name: Initialize Repo and Sync
+      run: |
+        mkdir -p ~/rom
+        cd ~/rom
+        repo init -u https://github.com/LineageOS/android.git -b lineage-21.0 --depth=1
+        repo sync -c --no-clone-bundle --no-tags --optimized-fetch --prune -j8
+
+    - name: Start Compilation
+      run: |
+        cd ~/rom
+        echo "Setup completed, ready for device configuration."

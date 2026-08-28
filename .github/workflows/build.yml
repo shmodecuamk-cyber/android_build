@@ -11,13 +11,22 @@ jobs:
     - name: Maximize Build Space
       uses: easimon/maximize-build-space@master
       with:
-        root-reserve-mb: 512
-        swap-size-mb: 1024
+        root-reserve-mb: 1024
+        swap-size-mb: 2048
         remove-dotnet: 'true'
         remove-android: 'true'
         remove-haskell: 'true'
         remove-codeql: 'true'
         remove-docker-images: 'true'
+
+    - name: Free Additional Disk Space
+      run: |
+        echo "Freeing up disk space..."
+        sudo rm -rf /usr/share/dotnet
+        sudo rm -rf /opt/ghc
+        sudo rm -rf "/usr/local/share/boost"
+        sudo rm -rf "$AGENT_TOOLSDIRECTORY"
+        df -h
 
     - name: Checkout Repository
       uses: actions/checkout@v3
@@ -32,9 +41,4 @@ jobs:
         mkdir -p ~/rom
         cd ~/rom
         repo init -u https://github.com/LineageOS/android.git -b lineage-21.0 --depth=1
-        repo sync -c --no-clone-bundle --no-tags --optimized-fetch --prune -j8
-
-    - name: Start Compilation
-      run: |
-        cd ~/rom
-        echo "Setup completed, ready for device configuration."
+        repo sync -c --no-clone-bundle --no-tags --optimized-fetch --prune -j4

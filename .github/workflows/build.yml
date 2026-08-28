@@ -1,47 +1,11 @@
-name: Build Android Go Edition
-
-on:
-  workflow_dispatch:
-
-jobs:
-  build:
-    runs-on: ubuntu-22.04
-
-    steps:
-      - name: Free Disk Space (Maximum)
-        uses: jlumbroso/free-disk-space@main
-        with:
-          tool-cache: true
-          android: true
-          dotnet: true
-          haskell: true
-          large-packages: true
-          docker-images: true
-          swap-storage: true
-
-      - name: Checkout Repository
-        uses: actions/checkout@v4
-
-      - name: Install Dependencies
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y git repo wget curl rsync cpio bc bison build-essential ccache curl flex g++-multilib gcc-multilib git gnupg gperf imagemagick lib32ncurses5-dev lib32z1-dev libelf-dev liblz4-tool libsdl1.2-dev libssl-dev libxml2 libxml2-utils lzop pngcrush rsync schedtool squashfs-tools xsltproc yasm zip zlib1g-dev
-
-      - name: Initialize Repo and Sync
-        run: |
-          mkdir -p ~/rom
-          cd ~/rom
-          repo init -u https://android.googlesource.com/platform/manifest -b android-14.0.0_r41 --depth=1
-          repo sync -c --no-clone-bundle --no-tags --optimized-fetch --prune -j4
-
-      - name: Setup Go Edition Environment
+- name: Setup Build Environment
         run: |
           cd ~/rom
           source build/envsetup.sh
           export ALLOW_MISSING_DEPENDENCIES=true
           
-          # Chọn cấu hình Go Edition
-          lunch aosp_arm64_go-userdebug
+          # Dùng bản AOSP chuẩn 64-bit hoặc bản Go edition tiêu chuẩn
+          lunch aosp_arm64-userdebug
           
           # Bắt đầu biên dịch
           mka bacon -j4

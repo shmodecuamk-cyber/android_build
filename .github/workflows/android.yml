@@ -9,9 +9,6 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: ./TEN_THU_MUC_CHUA_CODE  # Thay bằng tên thư mục chứa project thực tế của bạn trên GitHub
 
     steps:
     - name: Checkout code
@@ -33,4 +30,4 @@ jobs:
       uses: actions/upload-artifact@v4
       with:
         name: app-debug
-        path: TEN_THU_MUC_CHUA_CODE/app/build/outputs/apk/debug/app-debug.apk
+        path: app/build/outputs/apk/debug/app-debug.apk

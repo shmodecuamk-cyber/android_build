@@ -31,8 +31,7 @@ jobs:
         run: |
           mkdir -p ~/rom
           cd ~/rom
-          # Sử dụng AOSP thuần hoặc LineageOS làm nền tảng
-          repo init -u https://android.googlesource.com/platform/manifest -b android-14.0.0_r0.security_patch --depth=1
+          repo init -u https://android.googlesource.com/platform/manifest -b android-14.0.0_r41 --depth=1
           repo sync -c --no-clone-bundle --no-tags --optimized-fetch --prune -j4
 
       - name: Setup Go Edition Environment
@@ -41,8 +40,8 @@ jobs:
           source build/envsetup.sh
           export ALLOW_MISSING_DEPENDENCIES=true
           
-          # Chọn cấu hình Go Edition (ví dụ cấu hình chuẩn 64-bit Go)
+          # Chọn cấu hình Go Edition
           lunch aosp_arm64_go-userdebug
           
-          # Bắt đầu biên dịch (dùng mka hoặc make với số luồng -j4)
+          # Bắt đầu biên dịch
           mka bacon -j4

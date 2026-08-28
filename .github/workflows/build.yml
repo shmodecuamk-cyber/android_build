@@ -8,30 +8,28 @@ jobs:
     runs-on: ubuntu-22.04
 
     steps:
-    - name: Clean Up Disk Space Manually
-      run: |
-        echo "=== Before cleanup ==="
-        df -h
-        sudo rm -rf /usr/share/dotnet
-        sudo rm -rf /opt/ghc
-        sudo rm -rf "/usr/local/share/boost"
-        sudo rm -rf "$AGENT_TOOLSDIRECTORY"
-        sudo apt-get clean
-        docker image prune -a --force || true
-        echo "=== After cleanup ==="
-        df -h
+      - name: Free Disk Space (Maximum)
+        uses: jlumbroso/free-disk-space@main
+        with:
+          tool-cache: true
+          android: true
+          dotnet: true
+          haskell: true
+          large-packages: true
+          docker-images: true
+          swap-storage: true
 
-    - name: Checkout Repository
-      uses: actions/checkout@v3
+      - name: Checkout Repository
+        uses: actions/checkout@v3
 
-    - name: Install Dependencies
-      run: |
-        sudo apt-get update
-        sudo apt-get install -y git repo wget curl rsync cpio
+      - name: Install Dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y git repo wget curl rsync cpio
 
-    - name: Initialize Repo and Sync
-      run: |
-        mkdir -p ~/rom
-        cd ~/rom
-        repo init -u https://github.com/LineageOS/android.git -b lineage-21.0 --depth=1
-        repo sync -c --no-clone-bundle --no-tags --optimized-fetch --prune -j4
+      - name: Initialize Repo and Sync
+        run: |
+          mkdir -p ~/rom
+          cd ~/rom
+          repo init -u https://github.com/LineageOS/android.git -b lineage-21.0 --depth=1
+          repo sync -c --no-clone-bundle --no-tags --optimized-fetch --prune -j4

@@ -1,4 +1,4 @@
-name: Build Custom ROM
+name: Build Android Go Edition
 
 on:
   workflow_dispatch:
@@ -31,12 +31,18 @@ jobs:
         run: |
           mkdir -p ~/rom
           cd ~/rom
-          repo init -u https://github.com/LineageOS/android.git -b lineage-21.0 --depth=1
+          # Sử dụng AOSP thuần hoặc LineageOS làm nền tảng
+          repo init -u https://android.googlesource.com/platform/manifest -b android-14.0.0_r0.security_patch --depth=1
           repo sync -c --no-clone-bundle --no-tags --optimized-fetch --prune -j4
 
-      - name: Setup Build Environment
+      - name: Setup Go Edition Environment
         run: |
           cd ~/rom
           source build/envsetup.sh
           export ALLOW_MISSING_DEPENDENCIES=true
-          echo "Environment setup completed successfully."
+          
+          # Chọn cấu hình Go Edition (ví dụ cấu hình chuẩn 64-bit Go)
+          lunch aosp_arm64_go-userdebug
+          
+          # Bắt đầu biên dịch (dùng mka hoặc make với số luồng -j4)
+          mka bacon -j4

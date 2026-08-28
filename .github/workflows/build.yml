@@ -33,3 +33,17 @@ jobs:
           cd ~/rom
           repo init -u https://github.com/LineageOS/android.git -b lineage-21.0 --depth=1
           repo sync -c --no-clone-bundle --no-tags --optimized-fetch --prune -j4
+
+      - name: Clone Device Tree & Build
+        run: |
+          cd ~/rom
+          # --- DÁN CÁC LỆNH CLONE DEVICE TREE, VENDOR, KERNEL CỦA BẠN VÀO ĐÂY ---
+          # Ví dụ: git clone <link_device_tree> -b lineage-21.0 device/hang_dien_thoai/ten_thiet_bi
+          
+          # Thiết lập môi trường và build
+          source build/envsetup.sh
+          export ALLOW_MISSING_DEPENDENCIES=true
+          
+          # Thay thế 'lineage_device-userdebug' bằngcodename thiết bị thực tế của bạn
+          lunch lineage_device-userdebug
+          mka bacon -j4
